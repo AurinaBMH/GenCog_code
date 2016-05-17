@@ -2,25 +2,25 @@
 
 clear all; close all;
 
-Parcellation = {'cust100'};
-NumNodes1 = 220;
+Parcellation = {'aparcaseg'};
+NumNodes1 = 82;
 Threshold = 2;           % sample assignment distance threshold
 Thr = 3;                 % use thresholded or all genes
 NormMethod = {'zscore'}; % expression normalisation method
-LEFTcortex = 4;
+LEFTcortex = 1;
 % choose 1 if want to normalise samples assigned to left cortex separately;
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain.
 % choose 4 if you want to normalise left cortex + right cortex.
-if LeftCortex == 1 | LeftCortex == 2 % for left side use all 6 subjects
+if LEFTcortex == 1 || LEFTcortex == 2 % for left side use all 6 subjects
     NumSub = 6;
-elseif LeftCortex == 3 | LeftCortex == 4 % for both sides use onnly 1 and 2 subjects
+elseif LEFTcortex == 3 || LEFTcortex == 4 % for both sides use onnly 1 and 2 subjects
     NumSub = 2;
 end
 
-if LeftCortex == 1
+if LEFTcortex == 1
     Fit = {'exp'}; % choose what curve to fit on distance correction; exp works well for left cortex; linear for left + right cortex
-elseif LeftCortex == 4
+elseif LEFTcortex == 4
     Fit = {'linear'};
 else
     Fit = {'exp'}; % choose fit function yourself
