@@ -3,7 +3,7 @@ clear all; close all;
  
 Parcellation = {'cust250'};
 Threshold = 2; 
-NormMethod = {'scaledRobustSigmoid'};
+NormMethod = {'hampel'};
 LEFTcortex = 1; 
 Thr = 3;
 % choose 1 if want to normalise samples assigned to left cortex separately; 
