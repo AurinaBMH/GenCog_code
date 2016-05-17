@@ -18,7 +18,13 @@ elseif LeftCortex == 3 | LeftCortex == 4 % for both sides use onnly 1 and 2 subj
     NumSub = 2;
 end
 
-Fit = {'exp'}; % choose what curve to fit on distance correction; exp works erll for left cortex; linear for left + right cortex
+if LeftCortex == 1
+    Fit = {'exp'}; % choose what curve to fit on distance correction; exp works well for left cortex; linear for left + right cortex
+elseif LeftCortex == 4
+    Fit = {'linear'};
+else
+    Fit = {'exp'}; % choose fit function yourself
+end
 
 cd('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
 load (sprintf('%d_DistThresh2_%s_combined_ExpressionProbePCA_GeneThr%d.mat',NumNodes1, Parcellation{1}, Thr));
