@@ -2,36 +2,7 @@
 
 clear all; close all;
 
-Parcellation = {'aparcaseg'};
-NumNodes1 = 82;
-Threshold = 2;           % sample assignment distance threshold
-Thr = 3;                 % use thresholded or all genes
-NormMethod = {'zscore'}; % expression normalisation method
-LEFTcortex = 1;
-% choose 1 if want to normalise samples assigned to left cortex separately;
-% choose 2 if want to normalise LEFT cortex + left subcortex together
-% choose 3 if you want to normalise the whole brain.
-% choose 4 if you want to normalise left cortex + right cortex.
-if LEFTcortex == 1 || LEFTcortex == 2 % for left side use all 6 subjects
-    NumSub = 6;
-elseif LEFTcortex == 3 || LEFTcortex == 4 % for both sides use onnly 1 and 2 subjects
-    NumSub = 2;
-end
-
-if LEFTcortex == 1
-    Fit = {'exp'}; % choose what curve to fit on distance correction; exp works well for left cortex; linear for left + right cortex
-elseif LEFTcortex == 4
-    Fit = {'linear'};
-else
-    Fit = {'exp'}; % choose fit function yourself
-end
-
-cd('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
-load (sprintf('%d_DistThresh2_%s_combined_ExpressionProbePCA_GeneThr%d.mat',NumNodes1, Parcellation{1}, Thr));
-
-DataExpressionS = cell(6,1);
-DataCoordinatesS = cell(6,1);
-
+Parcellation = {'cust250'};
 if strcmp(Parcellation, 'aparcaseg')
 
                 NumNodes = 82;
@@ -53,6 +24,35 @@ if strcmp(Parcellation, 'aparcaseg')
                 RightSubcortex = NumNodes;
 
 end
+Threshold = 2;           % sample assignment distance threshold
+Thr = 0;                 % use thresholded or all genes
+NormMethod = {'zscore'}; % expression normalisation method
+LEFTcortex = 3;
+% choose 1 if want to normalise samples assigned to left cortex separately;
+% choose 2 if want to normalise LEFT cortex + left subcortex together
+% choose 3 if you want to normalise the whole brain.
+% choose 4 if you want to normalise left cortex + right cortex.
+if LEFTcortex == 1 || LEFTcortex == 2 % for left side use all 6 subjects
+    NumSub = 6;
+elseif LEFTcortex == 3 || LEFTcortex == 4 % for both sides use onnly 1 and 2 subjects
+    NumSub = 2;
+end
+
+if LEFTcortex == 1
+    Fit = {'exp'}; % choose what curve to fit on distance correction; exp works well for left cortex; linear for left + right cortex
+elseif LEFTcortex == 4
+    Fit = {'linear'};
+else
+    Fit = {'linear'}; % choose fit function yourself
+end
+
+cd('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
+load (sprintf('%d_DistThresh2_%s_combined_ExpressionProbePCA_GeneThr%d.mat',NumNodes, Parcellation{1}, Thr));
+
+DataExpressionS = cell(6,1);
+DataCoordinatesS = cell(6,1);
+
+
 
 for i=1:NumSub
   % normalise data for each subject separately using ROIs
@@ -116,7 +116,7 @@ Subj = CombinedExp(:,1);
 % plot reordered matrix
 figure; subplot(1,25,1); imagesc(Subj(ord_row));
         subplot(1,25,2); imagesc(ROI(ord_row));
-        subplot(1,25, [3 25]);  imagesc(DATA(ord_row,:)); title(sprintf('LeftCortex %s', NormMethod{1}));
+        subplot(1,25, [3 25]);  imagesc(DATA(ord_row,:)); title(sprintf('LeftCortex %s', NormMethod{1})); xlabel('Genes'); ylabel('Samples');
         caxis([-3,3]); colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 %% Calculate ranked correlation between samples using Spearman correlation.
@@ -130,19 +130,21 @@ MRIvoxCoordinates = pdist2(Coordinates, Coordinates);
 %Rvect = triu(ExpressionNorm,1);
 %make a vector for coexpression and distances
 Dvect = MRIvoxCoordinates(:);
+%ExpressionNorm(logical(eye(size(ExpressionNorm)))) = 0;
 Rvect = ExpressionNorm(:);
 
 %Plot quantiles (coexpression - distance relationship)
-BF_PlotQuantiles(Dvect,Rvect,100,0,1)
-figure; imagesc(ExpressionNorm); caxis([-1,1])
+BF_PlotQuantiles(Dvect,Rvect,20,0,1); title('Coexpresion vs distance'); 
+figure; imagesc(ExpressionNorm); caxis([-1,1]);title('Sample-sample coexpression');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 % fit distance correction according to a defined rule
 [f_handle,Stats,c] = GiveMeFit(Dvect,Rvect,Fit{1});
 
 % plot original and corrected doexpression-distance .
-figure; plot(c, Dvect, Rvect);
-figure; plot(c,Dvect, Rvect,'Residuals')
+figure; plot(c, Dvect, Rvect);title('Sample-sample distance relationship');
+figure; plot(c,Dvect, Rvect,'Residuals'); title('Sample-sample distance residuals');
+
 
 switch Fit{1}
 
@@ -162,31 +164,45 @@ switch Fit{1}
 end
 % get residuals
 Residuals = Rvect - FitCurve;
+BF_PlotQuantiles(Dvect,nonzeros(Residuals(:)),20,0,1); title('Coexpresion vs distance corrected');
 
 % average coexpressions of samples in the same ROI
 ROIs = CombinedExp(:,2);
 NumSamples = size(CombinedExp,1);
 CorrectedCoexpression = reshape(Residuals,[NumSamples, NumSamples]);
+
+figure; imagesc(CorrectedCoexpression); caxis([-1,1]); title('Corrected coexpression samples');
+colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 W = unique(ROIs);
 
 ParcelCoexpression = zeros(length(W),length(W));
 ROIs = CombinedExp(:,2);
 
+
+[sROIs, ind] = sort(ROIs);
+CorrectedCoexpressionSorted = CorrectedCoexpression(ind, ind);
+
+figure; subplot(1,25,[1 2]); imagesc(sROIs);
+subplot(1,25,[3 25]); imagesc(CorrectedCoexpressionSorted); caxis([-1,1]); title('Corrected coexpression sorted samples');
+colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
+
+
 W = unique(ROIs);
 for i=1:length(W)
     for j=1:length(W)
 
-        A = find(ROIs == W(i));
-        B = find(ROIs == W(j));
-        P = CorrectedCoexpression(A, B);
+        A = find(sROIs == W(i));
+        B = find(sROIs == W(j));
+        P = CorrectedCoexpressionSorted(A, B);
 
         ParcelCoexpression(i,j) = mean(mean(P));
 
     end
 end
 
-% plot final corrected coexpression according to ROIs
-figure; imagesc(ParcelCoexpression); caxis([-1,1])
+figure; imagesc(ParcelCoexpression); caxis([-1,1]); title('Parcellation coexpression ROIs');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
+% plot final corrected coexpression according to ROIs
+
 % plot corrected coexpression values as a histogram
-igure; histogram(ParcelCoexpression(:));
+figure; histogram(ParcelCoexpression(:));
