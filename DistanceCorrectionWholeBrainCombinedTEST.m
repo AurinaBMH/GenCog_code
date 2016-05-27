@@ -1,5 +1,7 @@
 %Separate distance correction for left hemisphere, right hemisphere and for
 %cortex-cortex,cortex-subcortex, subcortex-subcortec
+
+%% not finished script, waiting for final parcallations
 close all; clear all; 
 cd ('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
 
@@ -32,36 +34,63 @@ load(sprintf('%d_DistThresh2_%s_combined_WholeBrainNormalised.mat', NumNodes, Pa
 ExpressionNormSORTED = ExpressionNorm(ind, ind);
 MRIvoxCoordinatesSORTED = MRIvoxCoordinates(ind, ind);
 
-BrainPart = {'LCC', 'LCS', 'LSS', 'RCC', 'RCS', 'RSS','RLCC', 'RLCS1', 'RLCS2', 'RLSS', 'RLCC', 'RLCS1', 'RLCS2'};     
-%'LCC', 'LCS', 'LSS', 'RCC', 'RCS', 'RSS','RLCC', , 'RLCS1', 'RLCS2'
+BrainPart = {'Cortex', 'Subcortex','Mix'};     
+%'LCC', 'LCS', 'LSS', 'RCC', 'RCS', 'RSS','RLCC', 'RLCS1', 'RLCS2', 'RLSS', 'RLCC', 'RLCS1', 'RLCS2'
 for part = BrainPart
     
     switch part{1}
 
-        case 'LCC'
+        case 'Cortex'
             Fit = {'exp'};
 
-            [ROIsLC] = find(sROIs<=Lcortex);
+            %left cortex
+           [ROIsLC] = find(sROIs<=Lcortex);
             ExpLCC = ExpressionNormSORTED(ROIsLC, ROIsLC); 
             ExpLCC(logical(eye(size(ExpLCC)))) = 0;
             
-            Rvect = ExpLCC(:); 
-            indR = logical(Rvect(:))+0;
             
-            Rvect = nonzeros(ExpLCC(:)); 
-            
-            indR(indR>0) = Rvect; 
-
             DistLCC = MRIvoxCoordinatesSORTED(ROIsLC, ROIsLC);
             DistLCC(DistLCC==0) = 0.1;
             DistLCC(logical(eye(size(DistLCC)))) = 0;
             
-            Dvect = DistLCC(:); 
+            % right cortex
+            [ROIsRCC] = find(sROIs>Lsubcortex & sROIs<=Rcortex);
+            ExpRCC = ExpressionNormSORTED(ROIsRCC, ROIsRCC); 
+            ExpRCC(logical(eye(size(ExpRCC)))) = 0;
+ 
+
+            DistRCC = MRIvoxCoordinatesSORTED(ROIsRCC, ROIsRCC);
+            DistRCC(DistRCC==0) = 0.1;
+            DistRCC(logical(eye(size(DistRCC)))) = 0;
+            
+            
+            % left - right 
+            [ROIsRLCC1] = find(sROIs<=Lcortex);
+            [ROIsRLCC2] = find(sROIs>Lsubcortex & sROIs<=Rcortex);
+            ExpRLCC = ExpressionNormSORTED(ROIsRLCC2, ROIsRLCC1); 
+            DistRLCC = MRIvoxCoordinatesSORTED(ROIsRLCC2, ROIsRLCC1); 
+            
+            
+            M1Exp = vertcat(ExpLCC, ExpRLCC);
+            M2Exp = vertcat(ExpRLCC', ExpRCC);
+            MExp = horzcat(M1Exp, M2Exp); 
+            
+            M1Dist = vertcat(DistLCC, DistRLCC);
+            M2Dist = vertcat(DistRLCC', DistRCC);
+            MDist = horzcat(M1Dist, M2Dist);
+       
+            Rvect = MExp(:); 
+            indR = logical(Rvect(:))+0;
+            Rvect = nonzeros(MExp(:)); 
+            indR(indR>0) = Rvect; 
+            
+            
+            
+            
+            Dvect = MDist(:); 
             indD = logical(Dvect(:))+0;
             indF = logical(Dvect(:))+0;
-            
-            Dvect = nonzeros(DistLCC(:)); 
-            
+            Dvect = nonzeros(MDist(:)); 
             indD(indD>0) = Dvect; 
 
             
@@ -185,7 +214,7 @@ for part = BrainPart
             
              Fit = {'exp'};
 
-             [ROIsRCC] = find(sROIs>Lsubcortex & sROIs<=Rcortex);
+            [ROIsRCC] = find(sROIs>Lsubcortex & sROIs<=Rcortex);
             ExpRCC = ExpressionNormSORTED(ROIsRCC, ROIsRCC); 
             ExpRCC(logical(eye(size(ExpRCC)))) = 0;
             
@@ -440,9 +469,9 @@ for part = BrainPart
 end
 
 
-M1 = horzcat( ExpLCC, ExpLCS');
-M2 = horzcat (ExpLCS, ExpLSS);
-ML = cat(1, M1, M2);
+M1Exp = horzcat( ExpLCC, ExpLCS');
+M2Exp = horzcat (ExpLCS, ExpLSS);
+ML = cat(1, M1Exp, M2Exp);
 
 M3 = cat(2, ExpRCC, ExpRCS);
 M4 = cat(2, ExpRCS', ExpRSS);
@@ -458,9 +487,9 @@ MRL2 = MRL';
 
 MU = horzcat(ML, MRL2);
 MD = horzcat(MRL, MR);
-M = vertcat(MU, MD);
+MExp = vertcat(MU, MD);
 
-figure; imagesc(M); caxis([-1,1]);title('Sample-sample coexpression corrected');
+figure; imagesc(MExp); caxis([-1,1]);title('Sample-sample coexpression corrected');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 
@@ -471,7 +500,7 @@ for i=1:length(W)
 
         A = find(sROIs == W(i));
         B = find(sROIs == W(j));
-        P = M(A, B);
+        P = MExp(A, B);
 
         ParcelCoexpression(i,j) = mean(mean(P));
 
@@ -480,8 +509,6 @@ end
 
 figure; imagesc(ParcelCoexpression); caxis([-1,1]);title('Sample-sample coexpression corrected');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
-
-
 
 
 

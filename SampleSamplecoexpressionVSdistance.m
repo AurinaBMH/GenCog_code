@@ -27,7 +27,7 @@ end
 Threshold = 2;           % sample assignment distance threshold
 Thr = 0;                 % use thresholded or all genes
 NormMethod = {'zscore'}; % expression normalisation method
-LEFTcortex = 3;
+LEFTcortex = 4;
 % choose 1 if want to normalise samples assigned to left cortex separately;
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain.
@@ -70,8 +70,8 @@ for i=1:NumSub
         ExpSubj = ExpSubj1;
         Coord = Coord1(:,2:4);
     elseif LEFTcortex == 4
-        ExpSubj3 = ExpSubj1((ExpSubj1(:,2)>=LeftSubcortex & ExpSubj1(:,2)<=RightCortex),:);
-        Coord3 = Coord1((Coord1(:,5)>=LeftSubcortex & Coord1(:,5)<=RightCortex),2:4);
+        ExpSubj3 = ExpSubj1((ExpSubj1(:,2)>LeftSubcortex & ExpSubj1(:,2)<=RightCortex),:);
+        Coord3 = Coord1((Coord1(:,5)>LeftSubcortex & Coord1(:,5)<=RightCortex),2:4);
 
         ExpSubj2 = ExpSubj1((ExpSubj1(:,2)<=LeftCortex),:);
         Coord2 = Coord1((Coord1(:,5)<=LeftCortex),2:4);
@@ -206,3 +206,4 @@ colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 % plot corrected coexpression values as a histogram
 figure; histogram(ParcelCoexpression(:));
+

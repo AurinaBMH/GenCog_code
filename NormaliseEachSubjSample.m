@@ -2,11 +2,12 @@ clear all; close all;
 
 Parcellation = {'cust250'}; 
 Threshold = 2; 
-NormMethod = {'scaledRobustSigmoid'};
-LEFTcortex = 1; 
+NormMethod = {'zscore'};
+LEFTcortex = 4; 
 % choose 1 if want to normalise samples assigned to left cortex separately; 
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain. 
+% choose 4 if you want to normalise left cortex + right cortex.
 
 
 if strcmp(Parcellation, 'aparcaseg')
@@ -50,6 +51,15 @@ for i=1:6
     elseif LEFTcortex == 3
         ExpSubj = ExpSubj1;
         Coord = Coord1(:,2:4);
+    elseif LEFTcortex == 4
+        ExpSubj3 = ExpSubj1((ExpSubj1(:,2)>=LeftSubcortex & ExpSubj1(:,2)<=RightCortex),:);
+        Coord3 = Coord1((Coord1(:,5)>=LeftSubcortex & Coord1(:,5)<=RightCortex),2:4);
+        
+        ExpSubj2 = ExpSubj1((ExpSubj1(:,2)<=LeftCortex),:);
+        Coord2 = Coord1((Coord1(:,5)<=LeftCortex),2:4);
+        
+        ExpSubj = cat(1, ExpSubj2, ExpSubj3);
+        Coord = cat(1, Coord2, Coord3); 
     end
     
     data = ExpSubj(:,3:size(ExpSubj,2));
