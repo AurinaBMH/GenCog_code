@@ -3,9 +3,9 @@ clear all; close all;
  
 Parcellation = {'cust250'};
 Threshold = 2; 
-NormMethod = {'hampel'};
+NormMethod = {'zscore'};
 LEFTcortex = 1; 
-Thr = 3;
+Thr = 0;
 % choose 1 if want to normalise samples assigned to left cortex separately; 
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain. 
@@ -94,7 +94,7 @@ for i=1:6
       end
       S = zeros(length(ROIs),1);
       S(:) = i; 
-      ExpressionSubjROI{i} = [ROIs, S, ExpressionROInorm];
+      ExpressionSubjROI{i} = [ROIs, S, ExpressionROI];
       CoordinatesSubjROI{i} = [ROIs, S, CoordinatesROI];
 end
 % combine averaged, normalised data from all subjects

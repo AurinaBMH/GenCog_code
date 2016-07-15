@@ -3,7 +3,7 @@ clear all; close all;
 Parcellation = {'cust100'}; 
 Threshold = 2; 
 %NormMethod = {'zscore'};
-LEFTcortex = 4; 
+LEFTcortex = 1; 
 % choose 1 if want to normalise samples assigned to left cortex separately; 
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain. 
@@ -32,12 +32,12 @@ if strcmp(Parcellation, 'aparcaseg')
 
  end
 cd ('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
-load(sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr3.mat', NumNodes, Threshold, Parcellation{1}));
+load(sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr0.mat', NumNodes, Threshold, Parcellation{1}));
 
  ExpressionSubj = cell(6,1);
  CoordinatesSubj = cell(6,1);
  
-for i=1:2
+for i=1:6
   % normalise data for each subject separately using samples  
     ExpSubj1 = DataExpression{i,1};
     Coord1 = DataCoordinates{i,1};

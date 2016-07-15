@@ -32,7 +32,7 @@ if strcmp(Parcellation, 'aparcaseg')
 
  end
 cd ('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
-load(sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr3.mat', NumNodes, Threshold, Parcellation{1}));
+load(sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr0.mat', NumNodes, Threshold, Parcellation{1}));
 
  ExpressionSubjROI = cell(6,1);
  CoordinatesSubjROI = cell(6,1);

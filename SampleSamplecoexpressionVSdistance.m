@@ -27,7 +27,7 @@ end
 Threshold = 2;           % sample assignment distance threshold
 Thr = 0;                 % use thresholded or all genes
 NormMethod = {'zscore'}; % expression normalisation method
-LEFTcortex = 4;
+LEFTcortex = 1;
 % choose 1 if want to normalise samples assigned to left cortex separately;
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain.
