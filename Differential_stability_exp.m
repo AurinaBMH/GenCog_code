@@ -213,8 +213,7 @@ colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 % plot original doexpression-distance .
 BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),50,0,1); title('Coexpresion vs distance'); 
-%hold on; plot(c); 
-hold on; scatter(DistExpVect(:,1),stat.ypred);
+hold on; plot(c); 
 
 
 switch Fit{1}
