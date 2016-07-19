@@ -1,0 +1,1 @@
+for i=1:50 A = Zscored(:,i); figure; histogram(A); end
