@@ -132,9 +132,9 @@ stat.paramCI = nlparci(BETA,RESID,'Jacobian',J);
 stat.ypredlowerCI = stat.ypred - delta;
 stat.ypredupperCI = stat.ypred + delta;
 
-% plot(x,y,'ko') % observed data
-% hold on
-% plot(x,ypred,'k','LineWidth',2)
+% figure;
+%plot(x,y);
+%plot(x,stat.ypred,'k','LineWidth',2)
 % plot(x,[lower,upper],'r--','LineWidth',1.5)
 
 free_param_count=0;

@@ -2,24 +2,24 @@
 % forming a group matrix and weights. Purpose - to set up a threshold for
 % binarising the matrix. Coexpression between distance Uncorrected ROIs
 % should be higher for connected versus Connected nodes.
-clear all; close all;
+%clear all; close all;
 
-cd ('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Connectomes/Final88/');
-load ('FACT_custom200forCoexpressionTest.mat');
+cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
+load ('FACT_cust100_HCP_good.mat');
 
 
 DSs = [2 5 10 50 100];
 Thresholds = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1];
-NumWeights = 100;
-weightMeasure = {'count'};
-WEIGHT = count; 
+NumWeights = 1000;
+weightMeasure = {'density'};
+WEIGHT = density; 
 
 
 for l=1:length(DSs)
     
     DS = DSs(l);
     cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/')
-    load(sprintf('%dDSExpressionCust100CorrectedSigmoid.mat', DS));
+    load(sprintf('%dDSSpearmanExpressionCust100CorrectedSigmoid.mat', DS));
 
     Tvals = zeros(length(Thresholds), NumWeights);
     Pvals = zeros(length(Thresholds), NumWeights);
@@ -69,8 +69,8 @@ for l=1:length(DSs)
     end
     
     figure; imagesc(Tvals); colormap([flipud(BF_getcmap('blues',20));1,1,1;BF_getcmap('reds',20)]);
-    caxis([0 5]);
-    title(sprintf('%dDS Uncorrected T values', DS)); xlabel('Weight threshold'); ylabel('Consistency between subjects, %'); colorbar;
+    caxis([-7 7]);
+    title(sprintf('%dDS Corrected T values', DS)); xlabel('Weight threshold'); ylabel('Consistency between subjects, %'); colorbar;
     
     
 end

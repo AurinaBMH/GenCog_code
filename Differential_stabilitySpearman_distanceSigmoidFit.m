@@ -1,9 +1,21 @@
+%%
+% this script will do:
+%1. Normalise samples with all genes within a subject and stack normalised datasets together in order not to run DS delection on each subject afterwards.
+%2. Select Highest DS genes using Spearman correlation on raw values between overlaping ROIs in a pair of subjects.
+%3. Calculate sample - sample coexpression using highest DS genes
+%4. Correct for distance on samples (using sigmoid)
+%5. average normalised samples to ROIs
 
-clear all; close all;
-
+close all;
  
 Parcellation = {'cust100'};
+% assigning distance threshold
 Threshold = 2; 
+% Gene filterring threshold (intensity values)
+Thr = 0;
+%Choose what proportion of top DS genes to keep
+percent = 2;
+% choose gene normalisation method
 NormMethod = {'zscore'};
 LEFTcortex = 1; 
 % choose 1 if want to normalise samples assigned to left cortex separately; 
@@ -11,14 +23,9 @@ LEFTcortex = 1;
 % choose 3 if you want to normalise the whole brain. 
 % choose 4 if you want to normalise left cortex + right cortex. 
 
-Thr = 0;
-
 %Fit = {'exp'};
-%Choose what proportion of top DS genes to keep
-percent = 5;
 
 
-% choose 1 if want to normalise samples assigned to left cortex separately; choose 0 if want to normalise all samples together. 
 if LEFTcortex == 1 || LEFTcortex == 2
     NumSubjects = 6;
 elseif LEFTcortex == 3 || LEFTcortex == 4
@@ -81,16 +88,13 @@ for i=1:NumSubjects
     
     data = ExpSubj(:,3:size(ExpSubj,2));
     CoordSample{i} = Coord;
-    % normalise sample x gene data for each subject separately   
-    %% commented - not normalise
       if strcmp(NormMethod, 'hampel')
             ExpressionSampleNorm = Norm_hampel(data);
       else
             ExpressionSampleNorm = BF_NormalizeMatrix(data, NormMethod{1});
       end
-
+      
     ROI = ExpSubj(:,2); 
-
     ExpSampNorm{i} = [ROI, ExpressionSampleNorm]; 
     ROIs = unique(ExpSubj(:,2));
   
@@ -102,7 +106,7 @@ for i=1:NumSubjects
         
 %1. average samples to ROIs for each subject
 
-    ExpressionROI = zeros(length(ROIs),size(data,2));
+    ExpressionROI = zeros(length(ROIs),size(ExpressionSampleNorm,2));
     CoordinatesROI = zeros(length(ROIs),3);
     
           for j=1:length(ROIs)
@@ -127,43 +131,25 @@ for i=1:NumSubjects
 end
 % combine noramlised data for all subjects. 
 
-ExpSampNormalisedAll = vertcat(ExpSampNorm{1}, ExpSampNorm{2},ExpSampNorm{3},ExpSampNorm{4},ExpSampNorm{5},ExpSampNorm{6});
+ExpSampNormAll = vertcat(ExpSampNorm{1}, ExpSampNorm{2},ExpSampNorm{3},ExpSampNorm{4},ExpSampNorm{5},ExpSampNorm{6});
 CombinedCoord = cat(1,CoordSample{1}, CoordSample{2}, CoordSample{3},...
                       CoordSample{4}, CoordSample{5}, CoordSample{6});
 %2. get DS values for each gene     
 inter = cell(NumSubjects,NumSubjects);
 indexj = cell(NumSubjects,NumSubjects);
 indexk = cell(NumSubjects,NumSubjects);
-indexjp = cell(NumSubjects,NumSubjects);
 Corellations = cell(NumSubjects,NumSubjects);
 NumGenes = size(ExpressionSubjROI{1,1},2)-2;  
- 
 
-
-%get ROIs that are in all subjects
-R = cell(1,NumSubjects);
-for o=1:NumSubjects
-R{:,o} = ExpressionSubjROI{o}(:,1);
-end
-Intersect = mintersect(R{1}, R{2}, R{3}, R{4}, R{5}, R{6});
-
-ROIsindex = zeros(length(Intersect),NumSubjects);
-for j=1:NumSubjects
-
-    for w=1:length(Intersect)
-        ROIsindex(w,j) = find(R{j}==Intersect(w));
-    end
-end
         
-
 for j=1:NumSubjects
     for k=j+1:NumSubjects
-        % use a set list of ROIS that are present in all subjects
-%         [inter{j,k}, indexj{j,k}, indexk{j,k}] = intersect(ExpressionSubjROI{j}(:,1), ExpressionSubjROI{k}(:,1));
-%         Exp1 = ExpressionSubjROI{j}(indexj{j,k},3:NumGenes+2);
-%         Exp2 = ExpressionSubjROI{k}(indexk{j,k},3:NumGenes+2);
-        Exp1 = ExpressionSubjROI{j}(ROIsindex(:,j),3:NumGenes+2);
-        Exp2 = ExpressionSubjROI{k}(ROIsindex(:,k),3:NumGenes+2);
+        % get intersect or ROIs between each pair of subjects and calculate
+        % spearman correlation between raw values
+        [inter{j,k}, indexj{j,k}, indexk{j,k}] = intersect(ExpressionSubjROI{j}(:,1), ExpressionSubjROI{k}(:,1));
+        Exp1 = ExpressionSubjROI{j}(indexj{j,k},3:NumGenes+2);
+        Exp2 = ExpressionSubjROI{k}(indexk{j,k},3:NumGenes+2);
+
         Genes = zeros(1,NumGenes);
         for g=1:NumGenes
            
@@ -182,10 +168,6 @@ C = vertcat(Corellations{1,2}, Corellations{1,3}, Corellations{1,4}, Corellation
 end
 
 DS = mean(C,1); 
-
-% combined
-% CombinedExp = cat(1,ExpressionSubjROI{1},  ExpressionSubjROI{2}, ExpressionSubjROI{3},...
-%     ExpressionSubjROI{4}, ExpressionSubjROI{5}, ExpressionSubjROI{6});
 
 %3. take top % of DS genes 
 
@@ -207,7 +189,7 @@ DSProbeTable = table(Probes, DSvalues(:,2));
 
 %% select selected genes and calculate sample - sample coexpression
 
-SelectedGenes = ExpSampNormalisedAll(:,2:end);
+SelectedGenes = ExpSampNormAll(:,2:end);
 % take genes with highest DS values
 SelectedGenes = SelectedGenes(:,DSvalues(:,1));
 % calculate sample-sample coexpression
@@ -217,10 +199,8 @@ SampleCoexpression = corr(SelectedGenes', 'type', 'Spearman');
 MRIvoxCoordinates = pdist2(CombinedCoord, CombinedCoord);
 
 %make a vector for coexpression and distances
-
 DistExpVect(:,1) = MRIvoxCoordinates(:);
-%b replace diagonal with zeros
-%SampleCoexpression(logical(eye(size(SampleCoexpression)))) = 0;
+% replace diagonal with zeros
 DistExpVect(:,2) = SampleCoexpression(:);
 DistExpVect( ~any(DistExpVect,2), : ) = [];  %rows
 
@@ -230,52 +210,38 @@ Rvect = DistExpVect(:,2);
 figure; imagesc(SampleCoexpression); caxis([-1,1]);title('Sample-sample coexpression');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
-% fit distance correction according to a defined rule
-%[f_handle,Stats,c] = GiveMeFit(DistExpVect(:,1),DistExpVect(:,2),Fit{1});
+%% fit distance correction according to a defined rule
+
 % fit sigmoid
 [param,stat] = sigm_fit(DistExpVect(:,1),DistExpVect(:,2));
 
-% plot original doexpression-distance .
+% plot original coexpression-distance .
+
+y = param(1)+(param(2)-param(1))./(1+10.^((param(3)-DistExpVect(:,1))*param(4)));
+FittedCurve = [DistExpVect(:,1),y];
+FitSorted = sortrows(FittedCurve,2);
+% plot original + fit
 BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),50,0,1); title('Coexpresion vs distance'); 
-%hold on; plot(c); 
-hold on; scatter(DistExpVect(:,1),stat.ypred);
+hold on; plot(FitSorted(:,1), FitSorted(:,2),'r','LineWidth',2);
 
 
-% switch Fit{1}
-% 
-%         case 'linear'
-%             FitCurve = c.p1*Dvect + c.p2;
-%         case 'exp'
-%             FitCurve = c.A*exp(-c.n*Dvect) + c.B;
-%         case 'exp_1_0'
-%             FitCurve = exp(-c.n*Dvect);
-%         case 'decay'
-%             FitCurve = c.A/Dvect + c.B;
-%             Residuals = Rvect' - FitCurve;
-%         case 'exp0'
-%             FitCurve = c.A.*exp(-c.n*Dvect);
-%         case 'exp1'
-%             FitCurve = exp(-c.n*Dvect) + c.B;
-% end
-% get residuals
-%Residuals = Rvect - FitCurve;
-Residuals = Rvect - stat.ypred;
+Residuals = Rvect - y;
 BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpresion vs distance corrected');
 
 
 %% Plot corrected sample - sample coexpression matrix; 
 
-
 NumSamples = size(MRIvoxCoordinates,1);
 CorrectedCoexpression = reshape(Residuals,[NumSamples, NumSamples]);
+figure; imagesc(CorrectedCoexpression);
 caxis([-1,1]);title('Corrected Sample-sample coexpression');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 %% average coexpression values within a ROI and plot the corrected matirx (ROI-ROI coexpression);
-W = unique(ExpSampNormalisedAll(:,1));
+W = unique(ExpSampNormAll(:,1));
 
 ParcelCoexpression = zeros(length(W),length(W));
-ROIs = ExpSampNormalisedAll(:,1);
+ROIs = ExpSampNormAll(:,1);
 
 [sROIs, ind] = sort(ROIs);
 CorrectedCoexpressionSorted = CorrectedCoexpression(ind, ind);
@@ -303,7 +269,7 @@ end
 figure; imagesc(ParcelCoexpression); caxis([-1,1]); title('Parcellation coexpression ROIs');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
-% add zeros values to missing ROIs; p - missing ROI
+% add NaN values to missing ROIs; p - missing ROI
 p = 10;
 Exp = ParcelCoexpression;
 N1 = nan(LeftCortex,1);
