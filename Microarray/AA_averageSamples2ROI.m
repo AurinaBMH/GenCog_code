@@ -1,4 +1,4 @@
-%%%%
+%%%%%
 
 CorrectedCoexpression = reshape(Residuals,[1285, 1285]);
 ParcelCoexpression = zeros(225,225);
