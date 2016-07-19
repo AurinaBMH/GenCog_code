@@ -1,4 +1,4 @@
-%
+%%
 cd ('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Connectomes/Final88/');
 
 % load anatomical parcellation
