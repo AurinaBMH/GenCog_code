@@ -1,5 +1,5 @@
 function [y,e, dataCell,t, p] = CoexpConnectVSUnconnect(Exp,Adj)
-
+%
 % connected vs unconnected
 % Rexp - coexpression matrix
 % Adj - adjecency matrix
