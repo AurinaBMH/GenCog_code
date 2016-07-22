@@ -13,7 +13,7 @@
 kmax = max(deg);
 numIter = 20;
 numRepeats = 100;
-WhatTypeNetwork = 'bu';
+WhatTypeNetwork = 'wu';
 %Hemisphere = '2hemb;
 whatNullModel = 'randmio_und';
 wei_freq = 1; % (from 0 to 1 - higher values keep strength sequence);
@@ -45,7 +45,7 @@ wei_freq = 1; % (from 0 to 1 - higher values keep strength sequence);
                 hold on;
                 plot(find(isSig),PhiNormMean(isSig),'o','Color','r','LineWidth',3); xlim([min(deg) max(deg)+2]); % ylim([0.8 max(PhiNormMean)+0.05]);
                     title (sprintf('Normalised rich club \n %s %s', Method, Parcel)); xlabel('Degree'); ylabel('Phi (norm)'); set(gca,'FontSize',12,'fontWeight','bold');
-                subplot(2,1,2); hist(deg, 40); title ('Degree distribution'); xlim([min(deg) max(deg)+2]); xlabel('Degree'); set(gca,'FontSize',12,'fontWeight','bold');
+                subplot(2,1,2); hist(deg, 20); title ('Degree distribution'); xlim([min(deg) max(deg)+2]); xlabel('Degree'); set(gca,'FontSize',12,'fontWeight','bold');
                 
                 
                 

@@ -243,7 +243,7 @@ BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpre
 
 NumSamples = size(MRIvoxCoordinates,1);
 CorrectedCoexpression = reshape(Residuals,[NumSamples, NumSamples]);
-caxis([-1,1]);title('Corrected Sample-sample coexpression');
+figure; imagesc(CorrectedCoexpression); caxis([-1,1]);title('Corrected Sample-sample coexpression');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
 %% average coexpression values within a ROI and plot the corrected matirx (ROI-ROI coexpression);
