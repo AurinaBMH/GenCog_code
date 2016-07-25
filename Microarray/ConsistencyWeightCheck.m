@@ -5,14 +5,14 @@
 clear all; close all;
 
 cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
-load ('FACT_custom200ANDaseg_withdenoise.mat');
+load ('FACT_custom200ANDaseg_withoutdenoise.mat');
 
 
 DSs = [2 5 10 50 100];
 Thresholds = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1];
 NumWeights = 1000;
-weightMeasure = {'density'};
-WEIGHT = density; 
+weightMeasure = {'count'};
+WEIGHT = count; 
 
 
 for l=1:length(DSs)
@@ -32,6 +32,7 @@ for l=1:length(DSs)
         adjGrp = connectomeGroupThreshold(WEIGHT, grpThr, 2);
         Adj = adjGrp(1:100, 1:100);
         Adj(isnan(Adj))=0;
+        
         if strcmp(weightMeasure{1}, 'density') || strcmp(weightMeasure{1}, 'count')
             
             wmin = min(log(nonzeros(Adj(:)))); wmax = max(log(Adj(:)));
