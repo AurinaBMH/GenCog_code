@@ -2,7 +2,7 @@
 %clear all; 
 cd ('/gpfs/M2Scratch/Monash076/aurina/Gen_Cog/code/Diffusion_artefacts/Correction_scripts');
 
-%load('SubjectsCompareDenoiseCorrectionList.mat');
+%load('CorrectionList.mat');
 
 subjects = correct(:,1);
 SubjIDs = unique(subjects);

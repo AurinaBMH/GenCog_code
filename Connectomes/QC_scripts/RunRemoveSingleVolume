@@ -41,6 +41,10 @@ source RemoveSingleVolume
 #Volume=(32)
 #RemoveSingleVolume 243 ${Volume}
 
+
+#Volume=(19)
+#RemoveSingleVolume 285 ${Volume}
+
 # run those on forward.nii file
 
 Volume=(37)

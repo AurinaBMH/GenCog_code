@@ -29,5 +29,6 @@ clear all;
 
 
 [grad] = Removebvecs(243, [32]);
+[grad] = Removebvecs(285, [19]);
 [grad] = Removebvecs(280, [36 53]);
 
