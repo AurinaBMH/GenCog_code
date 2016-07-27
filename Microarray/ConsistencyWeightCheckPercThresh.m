@@ -5,15 +5,15 @@
 
 %% this script uses [AdjThr] = KeepPercWeights(Adj, perc); function to threshold weights
 
-clear all; close all;
+%clear all; close all;
 
 cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
-load ('iFOD2_custom200ANDaseg_withdenoise.mat');
+load ('FACT_cust100_HCP_good.mat');
 
 
-DSs = [2 5 10 50 100];
-Thresholds = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1];
-NumWeights = 1000;
+DSs = [5];
+Thresholds = [1];
+NumWeights = 1;
 weights = linspace(5,100,NumWeights);
 weights = flip(weights);
 weightMeasure = {'count'};
@@ -24,7 +24,7 @@ for l=1:length(DSs)
     
     DS = DSs(l);
     cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/')
-    load(sprintf('%dDSSpearmanExpressionCust100CorrectedSigmoid.mat', DS));
+    %load(sprintf('%dDSSpearmanExpressionCust100CorrectedSigmoid.mat', DS));
 
     Tvals = zeros(length(Thresholds), NumWeights);
     Pvals = zeros(length(Thresholds), NumWeights);
