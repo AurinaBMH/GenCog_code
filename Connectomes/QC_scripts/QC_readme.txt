@@ -19,4 +19,14 @@ Use MakeCopyforOKsubjects.m script for it.
 	RemoveMultipleVolumes - removes multiple volumes for 5 subjects (44,51,116,144,280).
 
 4. Update bvec and bval files according to removed volumes using RunRemovebvecs.m
-	
+
+
+File Subjects.mat contains subject IDs:
+
+allNonremovedSubjects	- IDs for all subjects that are not removed due to extreme artifacts. 
+GradCorrections		- Subjects, that had only gradients removed (no slice dropout corrections).
+HighMotion		- subjects, that had high motion (either by visual inspection or FD>2mm); need to keep an eye on them. 
+MultipleCorrections	- subjects that had multiple corrections - gradient correction and/or slice dropouts.
+NoCorrections		- subjects that had no corrections. 
+OnlySliceCorrections	- subjects that had only slice dropout correction (no gradients were deleted)
+RemovedSubjects		- subjects with substantial artifacts or corrupted images. 
