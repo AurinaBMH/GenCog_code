@@ -8,7 +8,7 @@
 clear all; close all;
 
 cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
-load ('FACT_cust100_HCP_good.mat');
+load ('iFOD2_custom200ANDaseg_withdenoise.mat');
 
 
 DSs = [2 5 10 50 100];
@@ -57,7 +57,7 @@ for l=1:length(DSs)
     end
     
     figure; imagesc(Tvals); colormap([flipud(BF_getcmap('blues',20));1,1,1;BF_getcmap('reds',20)]);
-    caxis([-7 7]);colorbar; %colorbar('southoutside');
+    caxis([0 12]);colorbar; %colorbar('southoutside');
     title(sprintf('%dDS Corrected T values', DS)); xlabel('Weight threshold'); ylabel('Consistency between subjects, %');
     
     

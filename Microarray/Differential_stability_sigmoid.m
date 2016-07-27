@@ -142,7 +142,7 @@ for j=1:NumSubjects
         Genes = zeros(1,NumGenes);
         for g=1:NumGenes
            
-            Genes(g) = corr(Exp1(:,g),Exp2(:,g),'type','Kendall'); 
+            Genes(g) = corr(Exp1(:,g),Exp2(:,g),'type','Spearman'); 
         end
         Corellations{j,k} = Genes; 
     end

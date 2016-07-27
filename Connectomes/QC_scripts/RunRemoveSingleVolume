@@ -1,0 +1,88 @@
+#!/bin/bash
+
+
+source RemoveSingleVolume
+# run those with forward_qcraw.nii file
+
+#Volume=(24)
+#RemoveSingleVolume 143 ${Volume}
+
+
+#Volume=(1)
+#RemoveSingleVolume 78 ${Volume}
+
+
+
+#Volume=(37)
+#RemoveSingleVolume 102 ${Volume}
+
+
+#Volume=(64)
+#RemoveSingleVolume 150 ${Volume}
+
+
+#Volume=(7)
+#RemoveSingleVolume 177 ${Volume}
+
+#Volume=(34)
+#RemoveSingleVolume 185 ${Volume}
+
+#Volume=(32)
+#RemoveSingleVolume 188 ${Volume}
+
+
+#Volume=(52)
+#RemoveSingleVolume 207 ${Volume}
+
+
+#Volume=(62)
+#RemoveSingleVolume 213 ${Volume}
+
+#Volume=(32)
+#RemoveSingleVolume 243 ${Volume}
+
+# run those on forward.nii file
+
+Volume=(37)
+RemoveSingleVolume 38 ${Volume}
+
+Volume=(14)
+RemoveSingleVolume 82 ${Volume}
+
+
+Volume=(48)
+RemoveSingleVolume 166 ${Volume}
+
+Volume=(9)
+RemoveSingleVolume 191 ${Volume}
+
+Volume=(38)
+RemoveSingleVolume 204 ${Volume}
+
+
+
+## multiple volumes (run separately)
+
+#Volumes=(7 26)
+#RemoveVolumes 44 ${Volumes}
+
+#Volumes=(29 63)
+#RemoveVolumes 51 ${Volumes}
+
+#Volumes=(19 49 57)
+#RemoveVolumes 116 ${Volumes}
+
+#Volumes=(15 24 36)
+#RemoveVolumes 144 ${Volumes}
+
+#Volumes=(36 53)
+#RemoveVolumes 280 ${Volumes}
+
+
+
+
+
+
+
+
+
