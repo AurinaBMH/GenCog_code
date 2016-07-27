@@ -18,7 +18,7 @@ LEFTcortex = 1;
 % choose 3 if you want to normalise the whole brain. 
 % choose 4 if you want to normalise left cortex + right cortex. 
 
-Fit = {'linear'};
+%Fit = {'linear'};
 
 
 if LEFTcortex == 1 || LEFTcortex == 2
@@ -213,22 +213,22 @@ BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),50,0,1); title('Coexpresion v
 hold on; plot(curve); 
 
 
-switch Fit{1}
-
-        case 'linear'
-            FitCurve = c.p1*Dvect + c.p2;
-        case 'exp'
-            FitCurve = c.A*exp(-c.n*Dvect) + c.B;
-        case 'exp_1_0'
-            FitCurve = exp(-c.n*Dvect);
-        case 'decay'
-            FitCurve = c.A/Dvect + c.B;
-            Residuals = Rvect' - FitCurve;
-        case 'exp0'
-            FitCurve = c.A.*exp(-c.n*Dvect);
-        case 'exp1'
-            FitCurve = exp(-c.n*Dvect) + c.B;
-end
+% switch Fit{1}
+% 
+%         case 'linear'
+%             FitCurve = c.p1*Dvect + c.p2;
+%         case 'exp'
+%             FitCurve = c.A*exp(-c.n*Dvect) + c.B;
+%         case 'exp_1_0'
+%             FitCurve = exp(-c.n*Dvect);
+%         case 'decay'
+%             FitCurve = c.A/Dvect + c.B;
+%             Residuals = Rvect' - FitCurve;
+%         case 'exp0'
+%             FitCurve = c.A.*exp(-c.n*Dvect);
+%         case 'exp1'
+%             FitCurve = exp(-c.n*Dvect) + c.B;
+% end
 %% choose random samples
 for t=1:10
 NumOfSamples = 100; 
@@ -244,7 +244,7 @@ VectSubset( ~any(VectSubset,2), : ) = [];  %rows
 
 figure; 
 scatter(VectSubset(:,1), VectSubset(:,2),'.b'); title(sprintf('%d', t)); hold on; plot(curve);axis([0 180 -0.8 1]);
-BF_PlotQuantiles(VectSubset(:,1),VectSubset(:,2),50,0,1); title('Coexpresion vs distance'); title(sprintf('%d', t)); hold on; plot(c); ...
+BF_PlotQuantiles(VectSubset(:,1),VectSubset(:,2),50,0,1); title('Coexpresion vs distance'); title(sprintf('%d', t)); hold on; plot(curve); ...
 axis([0 180 -0.8 1])
 
 end
