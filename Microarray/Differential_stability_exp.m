@@ -188,9 +188,11 @@ SelectedGenes = ExpSampNormalisedAll(:,2:end);
 SelectedGenes = SelectedGenes(:,DSvalues(:,1));
 % calculate sample-sample coexpression
 SampleCoexpression = corr(SelectedGenes', 'type', 'Spearman'); 
+SampleCoexpression = triu(SampleCoexpression,1); 
 %% check coexpression - distance relationship. 
 
 MRIvoxCoordinates = pdist2(CombinedCoord, CombinedCoord);
+MRIvoxCoordinates = triu(MRIvoxCoordinates,1);
 
 %make a vector for coexpression and distances
 
@@ -236,13 +238,19 @@ end
 Residuals = Rvect - FitCurve;
 
 BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpresion vs distance corrected');
-
+figure; scatter(DistExpVect(:,1), Residuals);
 
 %% Plot corrected sample - sample coexpression matrix; 
 
 
 NumSamples = size(MRIvoxCoordinates,1);
-CorrectedCoexpression = reshape(Residuals,[NumSamples, NumSamples]);
+CorrectedCoexpression = triu(ones(NumSamples),1);
+CorrectedCoexpression(CorrectedCoexpression==1) = Residuals;
+CorrectedCoexpression = CorrectedCoexpression+CorrectedCoexpression';
+
+
+
+%CorrectedCoexpression = reshape(Residuals,[NumSamples, NumSamples]);
 figure; imagesc(CorrectedCoexpression); caxis([-1,1]);title('Corrected Sample-sample coexpression');
 colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 
