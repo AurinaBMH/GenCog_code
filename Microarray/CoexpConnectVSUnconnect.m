@@ -30,7 +30,7 @@ mask = logical(Adj);
        dataCell = cell(2,1);
        dataCell{1,1} = Con; dataCell{2,1} = Uncon; 
        
-JitteredParallelScatter(dataCell)
+%JitteredParallelScatter(dataCell)
 %ylabel('Average coexpression'); legend('Connecteced', 'Unconnected');
 [h,p,ci,stats] = ttest2(Con,Uncon, 'Vartype','unequal');
 t = stats.tstat;
