@@ -4,8 +4,8 @@
 % rich club based on strength if WhatTypeNetwork = 'wus';
 % addpath(genpath('/gpfs/M2Scratch/Monash076/aurina/BCT/'))
 % 
- Method = 'Without left cortex';
- Parcel = 'ipsilateral cortex';
+ Method = 'Left cortex';
+ Parcel = 'With sift';
 
 % load(sprintf('%s%s_60_2hem_wu.mat', Method, Parcel));
 
@@ -13,7 +13,7 @@
 kmax = max(deg);
 numIter = 20;
 numRepeats = 100;
-WhatTypeNetwork = 'bu';
+WhatTypeNetwork = 'wu';
 %Hemisphere = '2hemb;
 whatNullModel = 'randmio_und';
 wei_freq = 1; % (from 0 to 1 - higher values keep strength sequence);
