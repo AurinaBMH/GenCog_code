@@ -80,7 +80,13 @@ Nnodes = size(adj, 1);
 % Select edges to retain
 %--------------------------------------------------------------------------
 
+% if a matrix has NaN values, raplace them with zero; 
+if any(isnan(adj))~=0
+adj(isnan(adj))=0;
+end
+
 % binarize matrices and compute proportion of subjects with each edge
+
 adjBin = adj;
 adjBin(adjBin~=0) = 1;
 
@@ -89,8 +95,8 @@ adjBin(adjBin~=0) = 1;
 if denSD ~= 0 
     
     % compute densities
-    for i = 1:size(adjBin, 3)
-        den(i) = density_und(adjBin(:,:,i));
+    for j = 1:size(adjBin, 3)
+        den(j) = density_und(adjBin(:,:,j));
     end
     
     % indicies of subjects to exclude
@@ -116,8 +122,8 @@ adjMask(adjMask~=0) = 1;
 fprintf('Density of group connectome is %d \n',density_und(adjMask));
 
 % threshold individual matrices
-for i = 1:size(adj,3)
-    adjThr(:,:,i) = adj(:,:,i).*adjMask;
+for k = 1:size(adj,3)
+    adjThr(:,:,k) = adj(:,:,k).*adjMask;
 end
 
 %--------------------------------------------------------------------------
@@ -128,14 +134,14 @@ end
 adjGrp = zeros(Nnodes, Nnodes);
 
 % get average of nonzero vals for each edge in upper triangle
-for i = 1:Nnodes
+for l = 1:Nnodes
     
-    for j = i+1:Nnodes
+    for j = l+1:Nnodes
         
-        vals = nonzeros(adjThr(i,j,:));
+        vals = nonzeros(adjThr(l,j,:));
         
         if ~isempty(vals)
-            adjGrp(i, j) = mean(vals);
+            adjGrp(l, j) = mean(vals);
         end
         
     end
