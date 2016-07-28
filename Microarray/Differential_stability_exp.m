@@ -262,6 +262,7 @@ ROIs = ExpSampNormalisedAll(:,1);
 
 [sROIs, ind] = sort(ROIs);
 CorrectedCoexpressionSorted = CorrectedCoexpression(ind, ind);
+SampleCoexpression = SampleCoexpression+SampleCoexpression';
 CoexpressionSorted = SampleCoexpression(ind, ind);
 
 
