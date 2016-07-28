@@ -1,8 +1,8 @@
-function vect = weightDistance (coord, math, grpThr, denSD)
+function vect = weightDistance (coord, math, grpThr, denSD, Names)
 
 % function vect = weightDistance (coord, math, grpThr)
 
-% This function will calculate and plot weight0distance relationship in a
+% This function will calculate and plot weight-distance relationship in a
 % group connectome
 %
 % -------
@@ -29,6 +29,7 @@ function vect = weightDistance (coord, math, grpThr, denSD)
 %          the subject will still be retained and the threshold applied to
 %          this subject in the outputs. To use the whole sample, set denSD
 %          = 0. This is the default.
+% Names - ROI labels in matlab format. 
 %
 % -------
 % OUTPUTS:
@@ -48,7 +49,7 @@ end
 
 % get group matrix
 [adjGrp] = connectomeGroupThreshold(math, grpThr, denSD) ;
-
+NumNodes = size(math{1,1},1);
 vect(:,1) = dist(:);
 vect(:,2) = adjGrp(:);
 
@@ -57,7 +58,18 @@ vect(:,2) = adjGrp(:);
 vect = vect(all(vect,2),:);
 
 
-% plot distance, weight relationship
+% plot matrix and distance, weight relationship
+figure;
+imagesc(adjGrp); colorbar;
+set(gca);
+ax = gca; 
+ax.YLim = [0.5 NumNodes+0.5];
+ax.XTick = 1:NumNodes;
+ax.YTick = 1:NumNodes;
+ax.YTickLabel = Names; 
+ax.XTickLabel = Names; 
+ax.XTickLabelRotation = 45; 
+
 figure;
 scatter(vect(:,1), vect(:,2), '.b');
 title('Weight-distance relationship'); xlabel('Distance between ROIs'); ylabel('Weight'); 
