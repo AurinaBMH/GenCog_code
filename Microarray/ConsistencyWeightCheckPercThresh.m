@@ -8,12 +8,12 @@
 %clear all; close all;
 
 cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
-load ('FACT_cust100_HCP_good.mat');
+load ('FACT_custom200ANDaseg_withoutdenoise.mat');
 
 
 DSs = [5];
-Thresholds = [1];
-NumWeights = 1;
+Thresholds = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1];
+NumWeights = 100;
 weights = linspace(5,100,NumWeights);
 weights = flip(weights);
 weightMeasure = {'count'};
@@ -57,7 +57,7 @@ for l=1:length(DSs)
     end
     
     figure; imagesc(Tvals); colormap([flipud(BF_getcmap('blues',20));1,1,1;BF_getcmap('reds',20)]);
-    caxis([0 12]);colorbar; %colorbar('southoutside');
+    caxis([-7 7]);colorbar; %colorbar('southoutside');
     title(sprintf('%dDS Corrected T values', DS)); xlabel('Weight threshold'); ylabel('Consistency between subjects, %');
     
     
