@@ -1,5 +1,5 @@
 % connection length and weight relationship in a group connectome
-clear all; close all;
+%clear all; close all;
 
 DS = 5;
 
@@ -7,7 +7,7 @@ cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/')
 load(sprintf('%dDSSpearmanExpressionCust100CorrectedSigmoid.mat', DS));
 load('FACT_custom200ANDaseg20.mat');
 
-Thresholds = [0.3 0.6 0.8];
+Thresholds = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1];
 weightMeasure = {'count'};
 WEIGHT = count;
 NumWeights = 1000;
