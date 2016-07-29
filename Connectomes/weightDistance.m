@@ -59,19 +59,19 @@ vect = vect(all(vect,2),:);
 
 
 % plot matrix and distance, weight relationship
-figure;
-imagesc(adjGrp); colorbar;
-set(gca);
-ax = gca; 
-ax.YLim = [0.5 NumNodes+0.5];
-ax.XTick = 1:NumNodes;
-ax.YTick = 1:NumNodes;
-ax.YTickLabel = Names; 
-ax.XTickLabel = Names; 
-ax.XTickLabelRotation = 45; 
+% figure;
+% imagesc(adjGrp); colorbar;
+% set(gca);
+% ax = gca; 
+% ax.YLim = [0.5 NumNodes+0.5];
+% ax.XTick = 1:NumNodes;
+% ax.YTick = 1:NumNodes;
+% ax.YTickLabel = Names; 
+% ax.XTickLabel = Names; 
+% ax.XTickLabelRotation = 45; 
 
 figure;
-scatter(vect(:,1), vect(:,2), '.b');
-title('Weight-distance relationship'); xlabel('Distance between ROIs'); ylabel('Weight'); 
+scatter(vect(:,1), (vect(:,2)), '.b');
+title('Weight-distance relationship'); xlabel('Distance between ROIs'); ylabel('weight'); 
 end
 
