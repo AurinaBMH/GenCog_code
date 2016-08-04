@@ -13,7 +13,7 @@
 kmax = max(deg);
 numIter = 20;
 numRepeats = 100;
-WhatTypeNetwork = 'wu';
+WhatTypeNetwork = 'bu';
 %Hemisphere = '2hemb;
 whatNullModel = 'randmio_und';
 wei_freq = 1; % (from 0 to 1 - higher values keep strength sequence);

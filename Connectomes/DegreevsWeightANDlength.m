@@ -1,10 +1,10 @@
 
 % choose what weight measure to use;
-math =FA;
+math =count;
 GrpThr = 0; 
 
 [Adj, ~, ~, prop] = connectomeGroupThreshold(math, GrpThr);
-%Adj = Adj(1:100,1:100); 
+Adj = Adj(1:100,1:100); 
 Adj(isnan(Adj))=0;
 d = degrees_und(Adj);
 
