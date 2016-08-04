@@ -194,9 +194,12 @@ SelectedGenes = ExpSampNormAll(:,2:end);
 SelectedGenes = SelectedGenes(:,DSvalues(:,1));
 % calculate sample-sample coexpression
 SampleCoexpression = corr(SelectedGenes', 'type', 'Spearman'); 
+SampleCoexpression = SampleCoexpression - diag(diag(SampleCoexpression));
+
 %% check coexpression - distance relationship. 
 
 MRIvoxCoordinates = pdist2(CombinedCoord, CombinedCoord);
+MRIvoxCoordinates = MRIvoxCoordinates - diag(diag(MRIvoxCoordinates));
 
 %make a vector for coexpression and distances
 DistExpVect(:,1) = MRIvoxCoordinates(:);

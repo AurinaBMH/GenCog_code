@@ -45,7 +45,7 @@ if strcmp(Parcellation, 'aparcaseg')
                 RightCortex = 515;
                 RightSubcortex = NumNodes;
 end
-cd ('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
+cd ('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined');
 load(sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr%d.mat', NumNodes, Threshold, Parcellation{1}, round(Thr)));
 
 
@@ -159,9 +159,9 @@ end
 
 DS = mean(C,1); 
 
-% combined
-% CombinedExp = cat(1,ExpressionSubjROI{1},  ExpressionSubjROI{2}, ExpressionSubjROI{3},...
-%     ExpressionSubjROI{4}, ExpressionSubjROI{5}, ExpressionSubjROI{6});
+%combined
+CombinedExp = cat(1,ExpressionSubjROI{1},  ExpressionSubjROI{2}, ExpressionSubjROI{3},...
+    ExpressionSubjROI{4}, ExpressionSubjROI{5}, ExpressionSubjROI{6});
 
 %3. take top 5% of DS genes 
 
@@ -276,9 +276,9 @@ for i=1:length(W)
         A = find(sROIs == W(i));
         B = find(sROIs == W(j));
         %for corrected
-        P = CorrectedCoexpressionSorted(A, B);
+        %P = CorrectedCoexpressionSorted(A, B);
         %for uncorrected
-        %P = CoexpressionSorted(A, B);
+        P = CoexpressionSorted(A, B);
         ParcelCoexpression(i,j) = mean(mean(P));
 
     end
