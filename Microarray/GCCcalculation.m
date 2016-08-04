@@ -3,9 +3,16 @@
 %
 % Aurina Arnatkeviciute, Monash University, Aug 2016.
 %==========================================================================
+cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/GCC');
+load('dataForGCC.mat');
 
+W = unique(ExpSampNormalisedAll(:,1));
+ROIs = ExpSampNormalisedAll(:,1);
+[sROIs, ind] = sort(ROIs);
 
 GCC = cell(size(SelectedGenes,2),1);
+GCCsorted = cell(size(SelectedGenes,2),1);
+
 for a=1:size(SelectedGenes,2)
     GCC{a} = zeros(size(SelectedGenes,1)); 
     for i=1:size(SelectedGenes,1)
@@ -15,16 +22,16 @@ for a=1:size(SelectedGenes,2)
         end
     end
     GCC{a} = GCC{a}+GCC{a}';
+    GCCsorted{a} = GCC{a}(ind, ind);
 end
 
 
 % average GCC scores according to a ROI. 
 
-W = unique(ExpSampNormalisedAll(:,1));
-ROIs = ExpSampNormalisedAll(:,1);
-[sROIs, ind] = sort(ROIs);
-GCCsorted = GCC(:,ind, ind);
 
+
+
+GCCroi = cell(size(SelectedGenes,2),1);
 
 for a=1:size(SelectedGenes,2)
     
@@ -35,10 +42,10 @@ for a=1:size(SelectedGenes,2)
         B = find(sROIs == W(j));
         %for corrected
         
-        P = GCCsorted(a, A, B);
+        P = GCCsorted{a}(A, B);
         %for uncorrected
         %P = CoexpressionSorted(A, B);
-        GCCroi(a,i,j) = mean(mean(P));
+        GCCroi{a}(i,j) = mean(mean(P));
     end
     end
 end
@@ -52,19 +59,21 @@ end
 
 
 GCCrank = cell(size(SelectedGenes,2),1);
+GCCranksorted= cell(size(SelectedGenes,2),1);
 for a=1:size(SelectedGenes,2)
     GCCrank{a} = zeros(size(SelectedGenes,1));
     for i=1:size(SelectedGenes,1)
         for j=i+1:size(SelectedGenes,1)
-            GCCrank{a}(i,j) = (((GenesRanked(i,a) - mean(GenesRanked(:,a)))/max(GenesRanked(:,a))))*(((GenesRanked(j,a) - mean(GenesRanked(:,a)))/max(GenesRanked(:,a))));
-            
+            GCCrank{a}(i,j) = ((GenesRanked(i,a) - mean(GenesRanked(:,a)))*(GenesRanked(j,a) - mean(GenesRanked(:,a))))/max(GenesRanked(:,a));
         end
     end
     GCCrank{a} = GCCrank{a}+GCCrank{a}';
+    GCCranksorted{a} = GCCrank{a}(ind, ind);
 end
 
 
 GCCranksorted = GCC(:,ind, ind);
+GCCrankroi = cell(size(SelectedGenes,2),1);
 for a=1:size(SelectedGenes,2)
     
     for i=1:length(W)
@@ -77,7 +86,7 @@ for a=1:size(SelectedGenes,2)
         P = GCCranksorted(a, A, B);
         %for uncorrected
         %P = CoexpressionSorted(A, B);
-        GCCrankroi(a,i,j) = mean(mean(P));
+        GCCrankroi{a}(i,j) = mean(mean(P));
     end
     end
 end
