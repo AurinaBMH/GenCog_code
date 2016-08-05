@@ -1,4 +1,4 @@
-function [Rich, Feeder, Local, MeanAll, x,prop, p1,p2,p3, t1,t2,t3] = RichDegreeBFcorrected(Rexp,Adj, ROIdist)
+function [Rich, Feeder, Local, MeanAll, x,prop, p1,p2,p3, t1,t2,t3] = RichDegreeBFcorrected(Rexp,Adj, ROIdist, NumBins)
 % Rexp - coexpression matrix
 % Adj - adjecency matrix
 
@@ -7,20 +7,20 @@ Degree = degrees_und(Adj);
 klevel = max(Degree);
 %Adjlog = logical(Adj);
 %NumLinks = sum(sum(Adjlog));
-NumBins=3;
 ROIdist = logical(Adj).*ROIdist; 
 
 
 %Y = discretize(ROIdist,linspace(min(min(nonzeros(ROIdist))), max(max(ROIdist)), NumBins+1));
 % to make equally sized bins 
-% [A, ind] = sort(ROIdist(:), 'descend');
-% Info = [A,ind];
-% out = Info(all(Info,2),:);
-% out = out(200:end, :); assign edge values accodring to row number.
+[A, ind] = sort(ROIdist(:), 'descend');
+Info = [A,ind];
+out = Info(all(Info,2),:);
+out = out(200:end, :); %assign edge values accodring to row number.
+sout = size(out,1); 
+edgeindex = linspace(sout,1,NumBins+1); 
 
+edges = round(out(round(edgeindex),1));
 
-edges = [11 27 40 55 77 160];
-%edges = [5 35 62 180];
 Y = discretize(ROIdist,edges);
 Y(isnan(Y))=0;
 
