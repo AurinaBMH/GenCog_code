@@ -24,9 +24,6 @@ edges = round(out(round(edgeindex),1));
 Y = discretize(ROIdist,edges);
 Y(isnan(Y))=0;
 
-%# assign values to bins
-%[~,Y] = histc(nonzeros(ROIdist), [binEdges(1:end-1) Inf]);
-
 Bins = unique(nonzeros(Y));
 
 prop = zeros(klevel,length(Bins),3);
@@ -43,7 +40,7 @@ for b=1:length(Bins)
     %Adjlog = logical(Adj);
     Adjlog = Binned;
     %Adjlog = Adjlog.*Binned;
-    NumLinks = 1; %sum(sum(Adjlog));
+    %NumLinks = 1; %sum(sum(Adjlog));
     
     for k = 1:klevel
         
@@ -76,9 +73,9 @@ for b=1:length(Bins)
         ToMean = [Rich(k) Feeder(k) Local(k)];
         MeanAll(k) = nanmean(ToMean);
         
-        R = find(mask==1); prop(k,b,1) = length(R)/NumLinks;
-        F = find(mask==2); prop(k,b,2) = length(F)/NumLinks;
-        L = find(mask==3); prop(k,b,3) = length(L)/NumLinks;
+        R = find(mask==1); prop(k,b,1) = length(R);
+        F = find(mask==2); prop(k,b,2) = length(F);
+        L = find(mask==3); prop(k,b,3) = length(L);
         
         
         
