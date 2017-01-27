@@ -45,7 +45,7 @@ if strcmp(Parcellation, 'aparcaseg')
                 RightCortex = 515;
                 RightSubcortex = NumNodes;
 end
-cd ('/Users/Aurina/Documents/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
+cd ('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/S01-S06_combined/');
 load(sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr%d.mat', NumNodes, Threshold, Parcellation{1}, round(Thr)));
 
 
@@ -145,7 +145,12 @@ R = cell(1,NumSubjects);
 for o=1:NumSubjects
 R{:,o} = ExpressionSubjROI{o}(:,1);
 end
+if LEFTcortex==4
+Intersect = mintersect(R{1}, R{2});
+else
 Intersect = mintersect(R{1}, R{2}, R{3}, R{4}, R{5}, R{6});
+end
+
 
 ROIsindex = zeros(length(Intersect),NumSubjects);
 for j=1:NumSubjects
@@ -228,7 +233,7 @@ Dvect = DistExpVect(:,1);
 Rvect = DistExpVect(:,2);
 
 figure; imagesc(SampleCoexpression); caxis([-1,1]);title('Sample-sample coexpression');
-colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
+colormap([flipud(BF_getcmap('blues',9));[1 1 1]; BF_getcmap('reds',9)]);
 
 % fit distance correction according to a defined rule
 %[f_handle,Stats,c] = GiveMeFit(DistExpVect(:,1),DistExpVect(:,2),Fit{1});
@@ -236,9 +241,9 @@ colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
 [param,stat] = sigm_fit(DistExpVect(:,1),DistExpVect(:,2));
 
 % plot original doexpression-distance .
-BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),50,0,1); title('Coexpresion vs distance'); 
+BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),50,0,1); title('Coexpresion vs distance'); ylim([-0.8 1]); 
 %hold on; plot(c); 
-hold on; scatter(DistExpVect(:,1),stat.ypred);
+hold on; scatter(DistExpVect(:,1),stat.ypred,1, '.', 'r');
 
 
 % switch Fit{1}
@@ -260,7 +265,7 @@ hold on; scatter(DistExpVect(:,1),stat.ypred);
 % get residuals
 %Residuals = Rvect - FitCurve;
 Residuals = Rvect - stat.ypred;
-BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpresion vs distance corrected');
+BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpresion vs distance corrected'); ylim([-0.8 1]); 
 
 
 %% Plot corrected sample - sample coexpression matrix; 
@@ -268,23 +273,29 @@ BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpre
 
 NumSamples = size(MRIvoxCoordinates,1);
 CorrectedCoexpression = reshape(Residuals,[NumSamples, NumSamples]);
-caxis([-1,1]);title('Corrected Sample-sample coexpression');
-colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
+figure; imagesc(CorrectedCoexpression); caxis([-1,1]);title('Corrected Sample-sample coexpression');
+colormap([flipud(BF_getcmap('blues',9));[1 1 1]; BF_getcmap('reds',9)]);
 
 %% average coexpression values within a ROI and plot the corrected matirx (ROI-ROI coexpression);
 W = unique(ExpSampNormalisedAll(:,1));
+indB = setdiff(linspace(1,LeftCortex,LeftCortex),W);
+for jj=1:length(indB)
+indB(jj) = indB(jj)-jj; 
+end
+N1 = nan(length(indB),1);
+W = insertrows(W,N1,indB);
 
 ParcelCoexpression = zeros(length(W),length(W));
 ROIs = ExpSampNormalisedAll(:,1);
 
 [sROIs, ind] = sort(ROIs);
 CorrectedCoexpressionSorted = CorrectedCoexpression(ind, ind);
-CoexpressionSorted = SampleCoexpression(ind, ind);
+CoexpressionSorted = CorrectedCoexpression(ind, ind);
 
 
 figure; subplot(1,25,[1 2]); imagesc(sROIs);
-subplot(1,25,[3 25]); imagesc(CorrectedCoexpressionSorted); caxis([-1,1]); title('Corrected coexpression sorted samples');
-colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
+subplot(1,25,[3 25]); imagesc(CoexpressionSorted); caxis([-1,1]); title('Corrected coexpression sorted samples');
+colormap([flipud(BF_getcmap('blues',9));[1 1 1]; BF_getcmap('reds',9)]);
 
 for i=1:length(W)
     for j=1:length(W)
@@ -292,26 +303,21 @@ for i=1:length(W)
         A = find(sROIs == W(i));
         B = find(sROIs == W(j));
         %for corrected
+        if isempty(A)==1 || isempty(B)==1
+        ParcelCoexpression(i,j) = NaN; 
+        else
         P = CorrectedCoexpressionSorted(A, B);
         %for uncorrected
         %P = CoexpressionSorted(A, B);
         ParcelCoexpression(i,j) = mean(mean(P));
+        end
 
     end
 end
 
 figure; imagesc(ParcelCoexpression); caxis([-1,1]); title('Parcellation coexpression ROIs');
-colormap([flipud(BF_getcmap('blues',9));BF_getcmap('reds',9)]);
+colormap([flipud(BF_getcmap('blues',9));[1 1 1];BF_getcmap('reds',9)]);
 
-% add zeros values to missing ROIs; p - missing ROI
-p = 10;
-Exp = ParcelCoexpression;
-N1 = nan(LeftCortex,1);
-N2 = nan(1, LeftCortex-1);
-
-
-B = vertcat(Exp(1:p-1,:), N2, Exp(p:end,:));
-Exp = horzcat(B(:,1:p-1), N1, B(:,p:end));
 
 
 

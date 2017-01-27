@@ -4,18 +4,18 @@
 % rich club based on strength if WhatTypeNetwork = 'wus';
 % addpath(genpath('/gpfs/M2Scratch/Monash076/aurina/BCT/'))
 % 
- Method = 'Left cortex';
- Parcel = 'With sift';
+ Method = 'Chemical synapses';
+ Parcel = 'Rich club coef';
 
 % load(sprintf('%s%s_60_2hem_wu.mat', Method, Parcel));
 
-[deg] = degrees_und(Adj);
+[~,~, deg] = degrees_dir(Adj);
 kmax = max(deg);
-numIter = 20;
-numRepeats = 100;
-WhatTypeNetwork = 'bu';
+numIter = 50;
+numRepeats = 1000;
+WhatTypeNetwork = 'bd';
 %Hemisphere = '2hemb;
-whatNullModel = 'randmio_und';
+whatNullModel = 'randmio_dir';
 wei_freq = 1; % (from 0 to 1 - higher values keep strength sequence);
 % whatNullModel = 'shuffleWeights'; - preserves topology and node strength (not weights); 
 % whatNullModel = 'Randomise_weights_keeping_topology; preserves topology and weight distribution, but not the strength of each node.
