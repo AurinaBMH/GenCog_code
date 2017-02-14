@@ -1,4 +1,4 @@
-function BF_PlotQuantiles(xData,yData,numThresholds,alsoScatter,makeNewFigure)
+function [xThresholds,yMeans] = BF_PlotQuantiles(xData,yData,numThresholds,alsoScatter,makeNewFigure)
 % Plots x-y scatter, but with mean of y plotted in quantiles of x
 % Ben Fulcher
 %-------------------------------------------------------------------------------

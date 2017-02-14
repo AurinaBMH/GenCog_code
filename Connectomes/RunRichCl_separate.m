@@ -12,7 +12,7 @@
 [~,~, deg] = degrees_dir(Adj);
 kmax = max(deg);
 numIter = 50;
-numRepeats = 1000;
+numRepeats = 100;
 WhatTypeNetwork = 'bd';
 %Hemisphere = '2hemb;
 whatNullModel = 'randmio_dir';
