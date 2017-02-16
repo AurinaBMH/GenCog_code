@@ -7,7 +7,7 @@ clear all; close all;
 Parcellation = {'aparcaseg'};
 Threshold = 2;
 NormMethod = {'zscore'};
-LEFTcortex = 1;
+LEFTcortex = 2;
 % choose 1 if want to normalise samples assigned to left cortex separately;
 % choose 2 if want to normalise LEFT cortex + left subcortex together
 % choose 3 if you want to normalise the whole brain.
@@ -110,7 +110,20 @@ Probes = ProbeInformation.GeneSymbol;
 %% get data for GRIN2A and GRIN2B genes
 [~, GRIN2Aind] = intersect(Probes, 'GRIN2A');
 [~, GRIN2Bind] = intersect(Probes, 'GRIN2B');
+%% get cooerinates for ROIs
+cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/GenCog_matrixes/Original_NEW')
+load('FACTaparcaseg_all.mat');
+numROIcoords = 82; 
+numSubjects = length(coords); 
+ROIcoords = zeros(numSubjects, numROIcoords,3);
 
+    for ww=1:numROIcoords
+        for qq=1:numSubjects
+        ROIcoords(qq,ww,:) = coords{1,qq}(ww,:);
+        end
+    end
+averageROIcoords = squeeze(mean(ROIcoords,1)); 
+  
 %% get values for those two genes for each brain separately
 % create a cell to store data
 expROISUBJECTS = cell(6,2); 
@@ -138,9 +151,12 @@ for pp=1:6
     fclose(fid);
     ROIsLEFT = ROInames{1,1}(1:numR,:);
     ROIsLEFT = ROIsLEFT(uROIS);
+    ROIcoords = averageROIcoords(uROIS,:); 
     
     expROISUBJECTS{pp,1} = expROI;
     expROISUBJECTS{pp,2} = ROIsLEFT; 
+    expROISUBJECTS{pp,3} = ROIcoords; 
+    
     
     %% plot expression for those 2 genes
     h = figure; imagesc(expROI); caxis([-2,2]);title(sprintf('GRIN2A, GRIN2B gene expression in subject %d', pp));
@@ -178,8 +194,11 @@ ROInames = textscan(fid, '%s%s','Delimiter','\t');
 fclose(fid);
 ROIsLEFT = ROInames{1,1}(1:numR,:);
 ROIsLEFT = ROIsLEFT(uROIS);
+ROIcoords = averageROIcoords(uROIS,:); 
+
 expROIAVERAGE{1,1} = expROI; 
 expROIAVERAGE{1,2} = ROIsLEFT; 
+expROIAVERAGE{1,3} = ROIcoords; 
 %% plot expression for those 2 genes
 h = figure; imagesc(expROI); caxis([-1.5,1.5]);title('AVERAGE GRIN2A, GRIN2B gene expression');
 colormap([flipud(BF_getcmap('blues',9));[1 1 1]; BF_getcmap('reds',9)]); colorbar;
