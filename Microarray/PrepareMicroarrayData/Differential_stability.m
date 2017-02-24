@@ -147,7 +147,7 @@ R{:,o} = ExpressionSubjROI{o}(:,1);
 end
 Intersect = mintersect(R{1}, R{2}, R{3}, R{4}, R{5}, R{6});
 
-ROIsindex = zeros(length(Intersect),NumSubjects);
+ROIsindex = zeros(length(Intersect),NumSubjects); % use a set list of ROIS that are present in all subjects
 for j=1:NumSubjects
 
     for w=1:length(Intersect)
@@ -200,8 +200,6 @@ NrGenes = round(length(DS)*percent/100);
     end
 
 % get probeIDs for selected DS genes
-cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
-load('MicroarrayDataPCAS01.mat');
 Probes = ProbeInformation.ProbeName(DSvalues(:,1));
 DSProbeTable = table(Probes, DSvalues(:,2));
 

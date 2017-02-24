@@ -15,8 +15,7 @@
      Parcellations = {'aparcaseg', 'cust100', 'cust250'};
 %     % choose the threshold (0, 2, 5, 15 (all points assigned))
      ThresholdList = [2];
-     
-     
+load('ProbeInformation.mat');      
    for Parcellation = Parcellations
        for Threshold = ThresholdList
            DataExpression = cell(length(subjects),1);
@@ -92,10 +91,10 @@
                  cd ('/gpfs/M2Scratch/Monash076/aurina/Gen_Cog/code/Microarray/S01-S06_combined');
                  fprintf(1, 'Saving combined data for %s parcellation and threshold %u\n', Parcellation{1}, Threshold)
                  if MaxVar == 1
-                    save (sprintf('%d_DistThresh%d_%s_combined_ExpressionProbeMaxVar_GeneTher%d.mat', NumNodes, Threshold, Parcellation{1}, round(Thr)), 'DataExpression', 'DataCoordinates');
+                    save (sprintf('%d_DistThresh%d_%s_combined_ExpressionProbeMaxVar_GeneTher%d.mat', NumNodes, Threshold, Parcellation{1}, round(Thr)), 'DataExpression', 'DataCoordinates', 'ProbeInformation');
                     
                  elseif PCA == 1
-                    save (sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr%d.mat', NumNodes, Threshold, Parcellation{1}, round(Thr)), 'DataExpression', 'DataCoordinates');
+                    save (sprintf('%d_DistThresh%d_%s_combined_ExpressionProbePCA_GeneThr%d.mat', NumNodes, Threshold, Parcellation{1}, round(Thr)), 'DataExpression', 'DataCoordinates', 'ProbeInformation');
                     
                  end
       end
