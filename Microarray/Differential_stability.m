@@ -1,10 +1,11 @@
 %
-clear all; close all;
+clear all; 
+%close all;
 
  
-Parcellation = {'aparcaseg'};
+Parcellation = {'cust100'};
 Threshold = 2; 
-NormMethod = {'zscore'};
+NormMethod = {'maxmin'};
 LEFTcortex = 1; 
 % choose 1 if want to normalise samples assigned to left cortex separately; 
 % choose 2 if want to normalise LEFT cortex + left subcortex together
@@ -15,7 +16,7 @@ Thr = 0;
 
 Fit = {'exp'};
 %Choose what proportion of top DS genes to keep
-percent = 100;
+percent = 5;
 
 
 % choose 1 if want to normalise samples assigned to left cortex separately; choose 0 if want to normalise all samples together. 
@@ -243,11 +244,14 @@ colormap([flipud(BF_getcmap('blues',9));[1 1 1]; BF_getcmap('reds',9)]);
 %[param,stat] = sigm_fit(DistExpVect(:,1),DistExpVect(:,2));
 
 % plot original doexpression-distance .
-%[xThresholds,yMeans] = BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),500,0,1); title('Coexpresion vs distance'); ylim([-0.8 1]); 
-%hold on; plot(c); 
-%hold on; scatter(DistExpVect(:,1),FitCurve,1, '.', 'r');
-
-
+[xThresholds,yMeans] = BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,2),50,0,1);  
+hold on; plot(c); 
+hold on; scatter(DistExpVect(:,1),FitCurve,1, '.', 'r');
+[Y,E] = discretize(DistExpVect(:,1),xThresholds); 
+for oo=1:size(DistExpVect,1)
+    DistExpVect(oo,3) = DistExpVect(oo,2)-yMeans(Y(oo)); 
+end
+[xThresholds,yMeans] = BF_PlotQuantiles(DistExpVect(:,1),DistExpVect(:,3),50,0,1); 
 switch Fit{1}
 
         case 'linear'
@@ -265,7 +269,7 @@ switch Fit{1}
             FitCurve = exp(-c.n*Dvect) + c.B;
 end
 % get residuals
-Residuals = Rvect - FitCurve;
+Residuals = DistExpVect(:,3); %Rvect - FitCurve;
 %Residuals = Rvect - stat.ypred;
 BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpresion vs distance corrected'); ylim([-0.8 1]); 
 
@@ -276,7 +280,7 @@ BF_PlotQuantiles(DistExpVect(:,1),nonzeros(Residuals(:)),50,0,1); title('Coexpre
 NumSamples = size(MRIvoxCoordinates,1);
 % insert NaN values for diagonal elements and create a matix. 
 NaNs = NaN(NumSamples,1); 
-inds = linspace(1,size(DistExpVect,1)+1284,1284);
+inds = linspace(1,size(DistExpVect,1)+size(MRIvoxCoordinates,1),size(MRIvoxCoordinates,1));
 for ll=1:length(inds)
     inds(ll) = inds(ll)-ll; 
 end
