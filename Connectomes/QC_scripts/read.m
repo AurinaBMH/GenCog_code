@@ -1,4 +1,4 @@
-function [hdr,data]=read(filename)
+function [hdr,data]=read2(filename)
 
 machineformat='ieee-le'; 
 

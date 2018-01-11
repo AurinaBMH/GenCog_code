@@ -5,7 +5,7 @@ clear all;
  
 Parcellation = {'cust100'};
 Threshold = 2; 
-NormMethod = {'maxmin'};
+NormMethod = {'scaledRobustSigmoid'};
 LEFTcortex = 1; 
 % choose 1 if want to normalise samples assigned to left cortex separately; 
 % choose 2 if want to normalise LEFT cortex + left subcortex together
@@ -206,8 +206,8 @@ NrGenes = round(length(DS)*percent/100);
     end
 
 % get probeIDs for selected DS genes
-cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
-load('MicroarrayDataPCAS01.mat');
+%cd('/Users/Aurina/GoogleDrive/Genetics_connectome/Gen_Cog/Data/Microarray/');
+%load('MicroarrayDataPCAS01.mat');
 Probes = ProbeInformation.GeneSymbol(DSvalues(:,1));
 DSProbeTable = table(Probes, DSvalues(:,2));
 
